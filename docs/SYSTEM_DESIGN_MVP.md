@@ -26,7 +26,7 @@
 
 ## Lib
 
-- `location-candidates.ts`: OpenAI client + Zod schema; returns 3 candidates
+- `location-candidate.ts`: OpenAI client + Zod schema; returns 1 candidate (+ advice)
 - `outfit.ts`: normalize Open‑Meteo daily arrays; map to presets + notes
 - `outfit-display.ts`: preset → icon/label map; array helper
 - `cache.ts`: tiny TTL in‑memory cache

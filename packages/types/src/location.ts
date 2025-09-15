@@ -20,20 +20,18 @@ export type TResolvedLocation = z.infer<typeof ResolvedLocation>;
 /**
  * Optional lightweight candidate list shape.
  */
-export const LlmCandidates = z.object({
-  candidates: z
-    .array(
-      z.object({
-        name: z.string(),
-        admin1: z.string().optional(),
-        country: z.string().optional(),
-        confidence: z.number().min(0).max(1),
-        rationale: z.string().optional(),
-      })
-    )
-    .max(2),
+export const LlmCandidate = z.object({
+  candidate: z
+    .object({
+      name: z.string(),
+      admin1: z.string().optional(),
+      country: z.string().optional(),
+      confidence: z.number().min(0).max(1),
+      rationale: z.string().optional(),
+    })
+    .nullable(),
   advice: z.string().optional(),
 });
 
-/** Type of `LlmCandidates`. */
-export type TLlmCandidates = z.infer<typeof LlmCandidates>;
+/** Type of `LlmCandidate`. */
+export type TLlmCandidate = z.infer<typeof LlmCandidate>;

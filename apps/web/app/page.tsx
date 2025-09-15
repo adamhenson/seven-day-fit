@@ -16,12 +16,12 @@ export default function Home(): ReactElement {
   const [loading, setLoading] = useState(false);
   const [locationLabel, setLocationLabel] = useState<string | null>(null);
   const [confidence, setConfidence] = useState<number | null>(null);
-  const [candidates, setCandidates] = useState<Array<{
+  const [candidate, setCandidate] = useState<{
     displayName: string;
     lat: number;
     lon: number;
     confidence: number;
-  }> | null>(null);
+  } | null>(null);
   const [advice, setAdvice] = useState<string | null>(null);
   const [days, setDays] = useState<TDayWeather[] | null>(null);
   const [outfits, setOutfits] = useState<TWeeklyOutfits['days'] | null>(null);
@@ -51,20 +51,20 @@ export default function Home(): ReactElement {
         if (!resolveRes.ok) throw new Error('Failed to resolve location');
         const data = (await resolveRes.json()) as {
           location?: { displayName: string; lat: number; lon: number; confidence?: number };
-          candidates?: Array<{ displayName: string; lat: number; lon: number; confidence: number }>;
+          candidate?: { displayName: string; lat: number; lon: number; confidence: number };
           accepted?: boolean;
           advice?: string;
           message?: string;
         };
         if (!data.location) {
-          setCandidates(data.candidates ?? []);
+          setCandidate(data.candidate ?? null);
           showToast(`We couldn't resolve that description. Try a clearer place name.`);
           setLoading(false);
           return;
         }
         setLocationLabel(data.location.displayName);
         setConfidence(data.location.confidence ?? null);
-        setCandidates(data.candidates ?? null);
+        setCandidate(data.candidate ?? null);
         setAdvice(typeof data.advice === 'string' ? data.advice : null);
 
         // Step 1 → 2: fetch forecast
@@ -152,11 +152,7 @@ export default function Home(): ReactElement {
         <StatusBanner
           indicator={confidence >= 0.7 ? 'check' : 'warn'}
           message={`We guessed ${locationLabel} (confidence ${(confidence * 100).toFixed(0)}%).${
-            confidence < 0.7
-              ? `${advice ? ` ${advice}` : ''}${
-                  candidates?.[1] ? ` Or did you mean ${candidates?.[1]!.displayName}?` : ''
-                }`
-              : ''
+            confidence < 0.7 && advice ? ` ${advice}` : ''
           }`}
           tone='muted'
         />

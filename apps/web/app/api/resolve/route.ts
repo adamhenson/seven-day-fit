@@ -1,4 +1,4 @@
-import { generateLocationCandidates } from '@/lib/location-candidates';
+import { generateLocationCandidate } from '@/lib/location-candidate';
 import { NextResponse } from 'next/server';
 import { cacheGet, cacheSet } from '../../../lib/cache';
 
@@ -22,27 +22,31 @@ export async function POST(req: Request) {
     >({ key: cacheKey, ttlMs: 60 * 60 * 1000 });
 
     if (!candidates) {
-      let llm: { candidates: any[]; advice?: string } = { candidates: [] };
+      let llm: { candidate: any | null; advice?: string } = { candidate: null };
       const advice: string | undefined = undefined;
       try {
-        llm = await generateLocationCandidates({ input });
+        llm = await generateLocationCandidate({ input });
       } catch (e) {
         return NextResponse.json({ error: (e as Error).message, accepted: false }, { status: 400 });
       }
-      const llmCandidates = (llm?.candidates || [])
-        .map((c) => ({
-          displayName: [c.name, c.admin1 ?? undefined, c.country ?? undefined]
-            .filter(Boolean)
-            .join(', '),
-          lat: c.lat,
-          lon: c.lon,
-          confidence: c.confidence ?? 0.7,
-        }))
-        .filter((x) => Number.isFinite(x.lat) && Number.isFinite(x.lon));
+      const primary = llm?.candidate
+        ? {
+            displayName: [
+              llm.candidate.name,
+              llm.candidate.admin1 ?? undefined,
+              llm.candidate.country ?? undefined,
+            ]
+              .filter(Boolean)
+              .join(', '),
+            lat: llm.candidate.lat,
+            lon: llm.candidate.lon,
+            confidence: llm.candidate.confidence ?? 0.7,
+          }
+        : null;
       const localAdvice =
         typeof llm?.advice === 'string' && llm.advice.trim() ? llm.advice.trim() : undefined;
       // Persist only candidates in cache; advice is request-specific
-      candidates = llmCandidates;
+      candidates = primary ? [primary] : [];
       cacheSet({ key: cacheKey, value: candidates });
       // Attach advice to response via closure variable
       (req as any).__advice = localAdvice;

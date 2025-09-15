@@ -18,27 +18,27 @@ const Candidate = z.object({
 });
 
 /**
- * Schema for the structured LLM response containing exactly two candidates
+ * Schema for the structured LLM response containing a single best candidate
  * and optional user advice when confidence is low.
  */
-const LlmCandidates = z.object({
-  candidates: z.array(Candidate).length(2),
+const LlmCandidate = z.object({
+  candidate: Candidate.nullable(),
   advice: z.string().optional(),
 });
 
 /**
  * Convenience TypeScript type for the structured LLM response.
  */
-type TLlmCandidates = z.infer<typeof LlmCandidates>;
+type TLlmCandidate = z.infer<typeof LlmCandidate>;
 
 /**
  * Generate location candidates from the text input.
  */
-export const generateLocationCandidates = async ({
+export const generateLocationCandidate = async ({
   input,
-}: { input: string }): Promise<{ candidates: TLlmCandidates['candidates']; advice?: string }> => {
+}: { input: string }): Promise<{ candidate: TLlmCandidate['candidate']; advice?: string }> => {
   const apiKey = OPENAI_API_KEY;
-  if (!apiKey) return { candidates: [] as TLlmCandidates['candidates'], advice: undefined };
+  if (!apiKey) return { candidate: null as TLlmCandidate['candidate'], advice: undefined };
   const openai = new OpenAI({ apiKey });
 
   const model = OPENAI_MODEL;
@@ -53,11 +53,11 @@ export const generateLocationCandidates = async ({
       },
       { role: 'user', content: input },
     ],
-    response_format: zodResponseFormat(LlmCandidates, 'candidates'),
+    response_format: zodResponseFormat(LlmCandidate, 'candidate'),
   });
 
   const content = completion.choices[0]?.message?.content ?? '';
-  let candidates = [] as TLlmCandidates['candidates'];
+  let candidate = null as TLlmCandidate['candidate'];
   let advice: string | undefined;
   try {
     const text =
@@ -67,11 +67,11 @@ export const generateLocationCandidates = async ({
           ? (content as any[]).map((c: any) => (typeof c?.text === 'string' ? c.text : '')).join('')
           : String(content);
     const obj = JSON.parse(text);
-    const parsed = LlmCandidates.safeParse(obj);
+    const parsed = LlmCandidate.safeParse(obj);
     if (parsed.success) {
-      candidates = parsed.data.candidates;
+      candidate = parsed.data.candidate;
       advice = parsed.data.advice ?? undefined;
     }
   } catch {}
-  return { candidates, advice };
+  return { candidate, advice };
 };
