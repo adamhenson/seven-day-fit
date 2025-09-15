@@ -121,7 +121,7 @@ export default function Home(): ReactElement {
         </p>
       </div>
 
-      <SearchBar onSubmit={handleSearch} />
+      <SearchBar onSubmit={handleSearch} disabled={loading} />
 
       <HeightTransition show={loading || (!!locationLabel && !!days)}>
         {loading ? (
