@@ -23,11 +23,14 @@ export type TResolvedLocation = z.infer<typeof ResolvedLocation>;
 export const LlmCandidate = z.object({
   candidate: z
     .object({
+      lat: z.number(),
+      lon: z.number(),
       name: z.string(),
-      admin1: z.string().optional(),
-      country: z.string().optional(),
-      confidence: z.number().min(0).max(1),
-      rationale: z.string().optional(),
+      admin1: z.string().nullable().optional(),
+      country: z.string().nullable().optional(),
+      placeType: z.enum(['neighborhood', 'city', 'region', 'country']).nullable().optional(),
+      confidence: z.number().min(0).max(1).nullable().optional(),
+      rationale: z.string().nullable().optional(),
     })
     .nullable(),
   advice: z.string().optional(),

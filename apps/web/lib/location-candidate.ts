@@ -1,35 +1,11 @@
+import { LlmCandidate, type TLlmCandidate } from '@seven-day-fit/types';
 import OpenAI from 'openai';
 import { zodResponseFormat } from 'openai/helpers/zod';
-import { z } from 'zod';
 import { OPENAI_API_KEY, OPENAI_MODEL, OPENAI_MODEL_MAX_COMPLETION_TOKENS } from './constants';
 
 /**
- * Schema for a single LLM-produced location candidate.
+ * Using shared DTO schema + type from @seven-day-fit/types
  */
-const Candidate = z.object({
-  lat: z.number(),
-  lon: z.number(),
-  name: z.string(),
-  admin1: z.string().nullable(),
-  country: z.string().nullable(),
-  placeType: z.enum(['neighborhood', 'city', 'region', 'country']).nullable(),
-  confidence: z.number().min(0).max(1).nullable(),
-  rationale: z.string().nullable(),
-});
-
-/**
- * Schema for the structured LLM response containing a single best candidate
- * and optional user advice when confidence is low.
- */
-const LlmCandidate = z.object({
-  candidate: Candidate.nullable(),
-  advice: z.string().optional(),
-});
-
-/**
- * Convenience TypeScript type for the structured LLM response.
- */
-type TLlmCandidate = z.infer<typeof LlmCandidate>;
 
 /**
  * Generate a single best location candidate from the text input.
