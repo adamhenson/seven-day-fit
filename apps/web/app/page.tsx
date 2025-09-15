@@ -1,6 +1,7 @@
 'use client';
 
 import { DayCard } from '@/components/DayCard';
+import { HeightTransition } from '@/components/HeightTransition';
 import { SearchBar } from '@/components/SearchBar';
 import { StatusBanner } from '@/components/StatusBanner';
 import { mapWeeklyOutfits } from '@/lib/outfit';
@@ -120,19 +121,23 @@ export default function Home(): ReactElement {
 
       <SearchBar onSubmit={handleSearch} />
 
-      {loading ? (
-        <StatusBanner
-          indicator={step >= 2 ? 'check' : 'spinner'}
-          message={
-            step === 0
-              ? 'Resolving location...'
-              : step === 1
-                ? 'Fetching forecast...'
-                : 'Forecast ready'
-          }
-          tone='muted'
-        />
-      ) : null}
+      <HeightTransition show={loading || (!!locationLabel && !!days)}>
+        {loading ? (
+          <StatusBanner
+            indicator={step >= 2 ? 'check' : 'spinner'}
+            message={step === 0 ? 'Resolving location...' : 'Fetching forecast...'}
+            tone='muted'
+          />
+        ) : locationLabel && confidence != null && days ? (
+          <StatusBanner
+            indicator={confidence >= 0.7 ? 'check' : 'warn'}
+            message={`Confidence ${(confidence * 100).toFixed(0)}%.${
+              confidence < 0.7 && advice ? ` ${advice}` : ''
+            }`}
+            tone='muted'
+          />
+        ) : null}
+      </HeightTransition>
       {toast ? (
         <div className='pointer-events-none fixed left-1/2 top-4 z-50 -translate-x-1/2 transform'>
           <div className='pointer-events-auto rounded-md border border-neutral-700 bg-neutral-900 px-4 py-2 text-sm text-neutral-100 shadow-lg'>
@@ -140,15 +145,7 @@ export default function Home(): ReactElement {
           </div>
         </div>
       ) : null}
-      {locationLabel && confidence != null ? (
-        <StatusBanner
-          indicator={confidence >= 0.7 ? 'check' : 'warn'}
-          message={`Confidence ${(confidence * 100).toFixed(0)}%.${
-            confidence < 0.7 && advice ? ` ${advice}` : ''
-          }`}
-          tone='muted'
-        />
-      ) : null}
+      {/* Final status banner is shown within HeightTransition after loading finishes */}
 
       {outfits && days && locationLabel ? (
         <h2 className='text-center text-xl text-muted-foreground'>{locationLabel}</h2>
