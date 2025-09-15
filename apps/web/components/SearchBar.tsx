@@ -41,7 +41,7 @@ export const SearchBar = ({
         <button
           type='submit'
           aria-label='Search'
-          className='absolute right-1.5 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-foreground text-background shadow-sm transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-foreground/40'
+          className='absolute right-2 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full bg-foreground text-background shadow-sm transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-foreground/40 cursor-pointer'
         >
           <svg
             xmlns='http://www.w3.org/2000/svg'
