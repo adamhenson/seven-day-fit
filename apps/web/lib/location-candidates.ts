@@ -17,10 +17,12 @@ const Candidate = z.object({
 });
 
 /**
- * Schema for the structured LLM response containing exactly three candidates.
+ * Schema for the structured LLM response containing exactly two candidates
+ * and optional user advice when confidence is low.
  */
 const LlmCandidates = z.object({
-  candidates: z.array(Candidate).length(3),
+  candidates: z.array(Candidate).length(2),
+  advice: z.string().optional(),
 });
 
 /**
@@ -46,7 +48,7 @@ export const generateLocationCandidates = async ({
       {
         role: 'system',
         content:
-          'Task: Convert a text input into 3 canonical place candidates with coordinates. The text could be a city, region, country, or a combination of these (or other ways one may refer to a location). It could also be a coy or nickname-filled clue. Each candidate must include: name (city/region), lat (number), lon (number). Include confidence 0..1 when possible. If ambiguous, still provide 3 plausible guesses. Prefer cities.',
+          'Task: Convert a text input into exactly 2 canonical place candidates with coordinates. The text could be a city, region, country, or a combination of these (or other ways one may refer to a location). It could also be a coy or nickname-filled clue. Each candidate must include: name (city/region), lat (number), lon (number). Include confidence 0..1 when possible. Prefer cities. Additionally, include an optional advice string when confidence is low that suggests how to phrase a clearer place description (e.g., avoid nicknames, remove non-place words, include city and state/country). Do not repeat or classify user content; provide constructive, neutral guidance only.',
       },
       { role: 'user', content: input },
     ],
@@ -56,6 +58,7 @@ export const generateLocationCandidates = async ({
 
   const content = completion.choices[0]?.message?.content ?? '';
   let candidates: TLlmCandidates['candidates'] | [] = [];
+  let advice: string | undefined;
   try {
     const text =
       typeof content === 'string'
@@ -65,7 +68,11 @@ export const generateLocationCandidates = async ({
           : String(content);
     const obj = JSON.parse(text);
     const parsed = LlmCandidates.safeParse(obj);
-    if (parsed.success) candidates = parsed.data.candidates;
+    if (parsed.success) {
+      candidates = parsed.data.candidates;
+      advice = parsed.data.advice ?? undefined;
+    }
   } catch {}
+  // We only return candidates for now; advice may be used by callers later.
   return candidates;
 };

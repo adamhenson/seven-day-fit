@@ -130,9 +130,9 @@ export default function Home(): ReactElement {
           indicator={step >= 2 ? 'check' : 'spinner'}
           message={
             step === 0
-              ? 'Decoding your clue…'
+              ? 'Resolving location...'
               : step === 1
-                ? 'Fetching forecast…'
+                ? 'Fetching forecast...'
                 : 'Forecast ready'
           }
           tone='muted'
