@@ -26,14 +26,14 @@ export const LlmCandidate = z.object({
       lat: z.number(),
       lon: z.number(),
       name: z.string(),
-      admin1: z.string().nullable().optional(),
-      country: z.string().nullable().optional(),
-      placeType: z.enum(['neighborhood', 'city', 'region', 'country']).nullable().optional(),
-      confidence: z.number().min(0).max(1).nullable().optional(),
-      rationale: z.string().nullable().optional(),
+      admin1: z.string().nullable(),
+      country: z.string().nullable(),
+      placeType: z.enum(['neighborhood', 'city', 'region', 'country']).nullable(),
+      confidence: z.number().min(0).max(1).nullable(),
+      rationale: z.string().nullable(),
     })
     .nullable(),
-  advice: z.string().optional(),
+  advice: z.string().nullable(),
 });
 
 /** Type of `LlmCandidate`. */

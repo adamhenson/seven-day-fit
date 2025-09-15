@@ -50,7 +50,7 @@ export async function POST(req: Request) {
           }
         : null;
       const localAdvice =
-        typeof llm?.advice === 'string' && llm.advice.trim() ? llm.advice.trim() : undefined;
+        typeof llm?.advice === 'string' && llm.advice.trim() ? llm.advice.trim() : null;
       // Persist both candidates and advice (and raw parts) in cache so we can reuse advice on hits
       const sanitize = (v?: string | null): string | undefined => {
         if (v == null) return undefined;
@@ -69,8 +69,8 @@ export async function POST(req: Request) {
         : undefined;
 
       candidates = primary ? [primary] : [];
-      cacheSet({ key: cacheKey, value: { candidates, advice: localAdvice, parts } });
-      cachedAdvice = localAdvice;
+      cacheSet({ key: cacheKey, value: { candidates, advice: localAdvice ?? undefined, parts } });
+      cachedAdvice = localAdvice ?? undefined;
       cachedParts = parts;
     }
 

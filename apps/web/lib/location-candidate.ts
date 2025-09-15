@@ -12,9 +12,12 @@ import { OPENAI_API_KEY, OPENAI_MODEL, OPENAI_MODEL_MAX_COMPLETION_TOKENS } from
  */
 export const generateLocationCandidate = async ({
   input,
-}: { input: string }): Promise<{ candidate: TLlmCandidate['candidate']; advice?: string }> => {
+}: { input: string }): Promise<{
+  candidate: TLlmCandidate['candidate'];
+  advice: string | null;
+}> => {
   const apiKey = OPENAI_API_KEY;
-  if (!apiKey) return { candidate: null as TLlmCandidate['candidate'], advice: undefined };
+  if (!apiKey) return { candidate: null as TLlmCandidate['candidate'], advice: null };
   const openai = new OpenAI({ apiKey });
 
   const model = OPENAI_MODEL;
@@ -34,7 +37,7 @@ export const generateLocationCandidate = async ({
 
   const content = completion.choices[0]?.message?.content ?? '';
   let candidate = null as TLlmCandidate['candidate'];
-  let advice: string | undefined;
+  let advice: string | null = null;
   try {
     const text =
       typeof content === 'string'
@@ -46,8 +49,8 @@ export const generateLocationCandidate = async ({
     const parsed = LlmCandidate.safeParse(obj);
     if (parsed.success) {
       candidate = parsed.data.candidate;
-      advice = parsed.data.advice ?? undefined;
+      advice = parsed.data.advice ?? null;
     }
   } catch {}
-  return { candidate, advice };
+  return { candidate, advice: advice ?? null };
 };
