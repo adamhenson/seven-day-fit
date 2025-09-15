@@ -16,12 +16,6 @@ export default function Home(): ReactElement {
   const [loading, setLoading] = useState(false);
   const [locationLabel, setLocationLabel] = useState<string | null>(null);
   const [confidence, setConfidence] = useState<number | null>(null);
-  const [candidate, setCandidate] = useState<{
-    displayName: string;
-    lat: number;
-    lon: number;
-    confidence: number;
-  } | null>(null);
   const [advice, setAdvice] = useState<string | null>(null);
   const [days, setDays] = useState<TDayWeather[] | null>(null);
   const [outfits, setOutfits] = useState<TWeeklyOutfits['days'] | null>(null);
@@ -57,14 +51,12 @@ export default function Home(): ReactElement {
           message?: string;
         };
         if (!data.location) {
-          setCandidate(data.candidate ?? null);
           showToast(`We couldn't resolve that description. Try a clearer place name.`);
           setLoading(false);
           return;
         }
         setLocationLabel(data.location.displayName);
         setConfidence(data.location.confidence ?? null);
-        setCandidate(data.candidate ?? null);
         setAdvice(typeof data.advice === 'string' ? data.advice : null);
 
         // Step 1 → 2: fetch forecast

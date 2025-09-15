@@ -53,7 +53,7 @@ export async function POST(req: Request) {
     }
 
     if (!candidates || candidates.length === 0) {
-      return NextResponse.json({ accepted: false, candidates: [], message: 'no candidates' });
+      return NextResponse.json({ accepted: false, candidate: null, message: 'no candidates' });
     }
 
     const sorted = candidates.sort(
@@ -62,7 +62,7 @@ export async function POST(req: Request) {
     const best = sorted[0];
 
     if (!best) {
-      return NextResponse.json({ accepted: false, candidates: [], message: 'no candidates' });
+      return NextResponse.json({ accepted: false, candidate: null, message: 'no candidates' });
     }
     const accepted = best.confidence >= 0.6;
 
@@ -77,7 +77,7 @@ export async function POST(req: Request) {
         confidence: best.confidence,
       },
       accepted,
-      candidates: candidates.slice(0, 2),
+      candidate: best,
       advice: ((req as any).__advice as string | undefined) ?? undefined,
     });
   } catch (error) {
