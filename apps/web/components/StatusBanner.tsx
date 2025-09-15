@@ -32,8 +32,8 @@ export const StatusBanner = ({
       aria-live='polite'
       aria-atomic='true'
     >
-      <div className='flex items-center gap-3'>
-        <div className='flex h-4 w-4 items-center justify-center' aria-hidden='true'>
+      <div className='flex items-start gap-3'>
+        <div className='mt-0.5 flex h-4 w-4 items-center justify-center' aria-hidden='true'>
           {indicator === 'spinner' ? (
             // neutral spinner
             <svg
