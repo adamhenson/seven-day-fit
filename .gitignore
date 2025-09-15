@@ -1,0 +1,44 @@
+# Root ignore for all workspaces
+
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Next.js build outputs
+.next/
+**/.next/
+out/
+**/out/
+.vercel/
+
+# Dist/build
+/dist/
+**/dist/
+.turbo/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Env files
+.env*
+!.env.example
+!example.env
+
+# OS/editor
+.DS_Store
+.vscode/
+.idea/
+
+# Coverage
+coverage/
+**/coverage/
+
+# TypeScript build info
+tsconfig.tsbuildinfo
+**/*.tsbuildinfo
+
+# Prisma generated client
+packages/db/prisma/client/

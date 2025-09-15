@@ -1,0 +1,11 @@
+set -e
+
+# Run biome format then check on all files
+echo "Running biome format..."
+npx biome format --write .
+
+echo "Running biome check..."
+npx biome check .
+
+# Add any newly formatted files
+git add .

@@ -1,0 +1,27 @@
+{
+  "name": "seven-day-fit",
+  "private": true,
+  "version": "0.0.1",
+  "description": "An AI weather stylist",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.8.3",
+    "dotenv-cli": "^7.4.2",
+    "husky": "^9.1.7",
+    "typescript": "^5.6.2"
+  },
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "prepare": "husky",
+    "lint": "biome lint .",
+    "format": "biome format --write .",
+    "build": "npm -w packages/types run build",
+    "web:dev": "dotenv -e .env -- npm -w apps/web run dev",
+    "web:build": "dotenv -e .env -- npm -w apps/web run build",
+    "web:start": "dotenv -e .env -- npm -w apps/web run start",
+    "typecheck": "tsc --noEmit -p ."
+  }
+}

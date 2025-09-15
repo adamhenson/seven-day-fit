@@ -1,0 +1,64 @@
+# Cursor Rules
+
+## Commit Messages
+
+- Always use conventional commits format: `type(scope): description`
+- Always commit granularly
+- Types: feat, fix, docs, style, refactor, test, chore, perf, ci, build
+- Examples:
+  - `feat(auth): add JWT refresh token support`
+  - `fix(logs): resolve timestamp parsing issue`
+  - `docs(readme): update API documentation`
+  - `test(auth): add registration endpoint tests`
+  - `chore(deps): update dependencies`
+
+## Code Style
+
+- Use TypeScript strict mode
+- Prefer explicit return types for functions
+- Use async/await over promises
+- Use descriptive variable names
+- Write code with granular functions (including React components). When possible functions should each exist in their own file (including React components).
+- Prefer using function object params vs function arguments. See example at bottom.
+- Use JSDoc syntax to describe functions and React components. These blocks should be placed above all functions and do not define JSDoc params or return types, we'll use TypeScript as the source of truth for this. See example at bottom.
+- For functions and React components separate params line by line, with a JSDoc comment above describing the param . See example at bottom.
+- List / define params in alphabetical order.
+- If the code has a test setup, be sure to write tests.
+
+Example:
+
+```typescript
+/**
+ * Function to do the following things for the following reason/s (if any)
+ */
+const myFunc = ({
+  hello,
+  world,
+}: {
+  /** This value represents some thing for some use */
+  hello?: string;
+
+  /** This value represents some thing for some use */
+  world: number;
+}) => {
+  // code
+};
+```
+
+```tsx
+/**
+ * React component to do the following things for the following reason/s (if any)
+ */
+const MyComponent = ({
+  hello,
+  world,
+}: {
+  /** This value represents some thing for some use */
+  hello?: string;
+
+  /** This value represents some thing for some use */
+  world: number;
+}) => {
+  // code
+};
+```
