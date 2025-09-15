@@ -56,7 +56,7 @@ export default function Home(): ReactElement {
         };
         if (!data.location) {
           setCandidates(data.candidates ?? []);
-          showToast("We couldn't resolve that description. Try a clearer place name.");
+          showToast(`We couldn't resolve that description. Try a clearer place name.`);
           setLoading(false);
           return;
         }
