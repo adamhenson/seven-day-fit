@@ -31,7 +31,8 @@ export const LlmCandidates = z.object({
         rationale: z.string().optional(),
       })
     )
-    .max(3),
+    .max(2),
+  advice: z.string().optional(),
 });
 
 /** Type of `LlmCandidates`. */
