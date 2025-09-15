@@ -152,9 +152,14 @@ export default function Home(): ReactElement {
 
       {/* no-results notice handled by toast */}
       {outfits && days ? (
-        <div className='mt-6 grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(260px,1fr))] lg:grid-cols-7'>
+        <div className='mt-6 flex flex-row flex-wrap gap-4'>
           {outfits.map((d) => (
-            <DayCard key={d.dateISO} day={d} outfit={d.outfit as any} notes={d.notes} />
+            <div
+              key={d.dateISO}
+              className='basis-[260px] flex-shrink-0 grow sm:basis-[280px] md:basis-[300px]'
+            >
+              <DayCard day={d} outfit={d.outfit as any} notes={d.notes} />
+            </div>
           ))}
         </div>
       ) : null}
