@@ -110,7 +110,7 @@ export default function Home(): ReactElement {
   );
 
   return (
-    <main className='mx-auto flex min-h-screen max-w-3xl flex-col gap-8 p-6'>
+    <main className='mx-auto flex min-h-screen max-w-7xl flex-col gap-8 p-6'>
       <div className='mx-auto mt-16 w-full max-w-xl text-center'>
         <h1 className='mb-2 text-3xl font-semibold'>Seven Day Fit</h1>
         <p className='text-sm text-muted-foreground'>
@@ -152,7 +152,7 @@ export default function Home(): ReactElement {
 
       {/* no-results notice handled by toast */}
       {outfits && days ? (
-        <div className='mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3'>
+        <div className='mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7'>
           {outfits.map((d) => (
             <DayCard key={d.dateISO} day={d} outfit={d.outfit as any} notes={d.notes} />
           ))}
