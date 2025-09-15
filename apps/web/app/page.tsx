@@ -143,7 +143,7 @@ export default function Home(): ReactElement {
       {locationLabel && confidence != null ? (
         <StatusBanner
           indicator={confidence >= 0.7 ? 'check' : 'warn'}
-          message={`We guessed ${locationLabel} (confidence ${(confidence * 100).toFixed(0)}%).${
+          message={`Confidence ${(confidence * 100).toFixed(0)}%.${
             confidence < 0.7 && advice ? ` ${advice}` : ''
           }`}
           tone='muted'
