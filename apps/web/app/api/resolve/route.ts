@@ -22,13 +22,14 @@ export async function POST(req: Request) {
     >({ key: cacheKey, ttlMs: 60 * 60 * 1000 });
 
     if (!candidates) {
-      let llm: any[] = [];
+      let llm: { candidates: any[]; advice?: string } = { candidates: [] };
+      const advice: string | undefined = undefined;
       try {
         llm = await generateLocationCandidates({ input });
       } catch (e) {
         return NextResponse.json({ error: (e as Error).message, accepted: false }, { status: 400 });
       }
-      candidates = (llm || [])
+      const llmCandidates = (llm?.candidates || [])
         .map((c) => ({
           displayName: [c.name, c.admin1 ?? undefined, c.country ?? undefined]
             .filter(Boolean)
@@ -38,7 +39,13 @@ export async function POST(req: Request) {
           confidence: c.confidence ?? 0.7,
         }))
         .filter((x) => Number.isFinite(x.lat) && Number.isFinite(x.lon));
+      const localAdvice =
+        typeof llm?.advice === 'string' && llm.advice.trim() ? llm.advice.trim() : undefined;
+      // Persist only candidates in cache; advice is request-specific
+      candidates = llmCandidates;
       cacheSet({ key: cacheKey, value: candidates });
+      // Attach advice to response via closure variable
+      (req as any).__advice = localAdvice;
     }
 
     if (!candidates || candidates.length === 0) {
@@ -66,7 +73,8 @@ export async function POST(req: Request) {
         confidence: best.confidence,
       },
       accepted,
-      candidates: candidates.slice(0, 3),
+      candidates: candidates.slice(0, 2),
+      advice: ((req as any).__advice as string | undefined) ?? undefined,
     });
   } catch (error) {
     return NextResponse.json({ error: (error as Error).message }, { status: 500 });

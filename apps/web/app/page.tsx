@@ -22,6 +22,7 @@ export default function Home(): ReactElement {
     lon: number;
     confidence: number;
   }> | null>(null);
+  const [advice, setAdvice] = useState<string | null>(null);
   const [days, setDays] = useState<TDayWeather[] | null>(null);
   const [outfits, setOutfits] = useState<TWeeklyOutfits['days'] | null>(null);
   const [toast, setToast] = useState<string | null>(null);
@@ -52,6 +53,7 @@ export default function Home(): ReactElement {
           location?: { displayName: string; lat: number; lon: number; confidence?: number };
           candidates?: Array<{ displayName: string; lat: number; lon: number; confidence: number }>;
           accepted?: boolean;
+          advice?: string;
           message?: string;
         };
         if (!data.location) {
@@ -63,6 +65,7 @@ export default function Home(): ReactElement {
         setLocationLabel(data.location.displayName);
         setConfidence(data.location.confidence ?? null);
         setCandidates(data.candidates ?? null);
+        setAdvice(typeof data.advice === 'string' ? data.advice : null);
 
         // Step 1 → 2: fetch forecast
         setStep(1);
@@ -145,69 +148,18 @@ export default function Home(): ReactElement {
           </div>
         </div>
       ) : null}
-      {locationLabel ? (
-        <div className='mx-auto max-w-xl text-center text-sm text-muted-foreground'>
-          We guessed {locationLabel}
-          {confidence != null ? ` (confidence ${(confidence * 100).toFixed(0)}%)` : ''}.
-        </div>
-      ) : null}
-      {candidates && confidence != null && confidence < 0.6 ? (
-        <div className='mx-auto max-w-xl text-center text-xs text-muted-foreground'>
-          Not sure? Did you mean:
-          <div className='mt-2 flex flex-wrap justify-center gap-2'>
-            {candidates.map((c) => (
-              <button
-                type='button'
-                key={`${c.displayName}-${c.lat}-${c.lon}`}
-                className='rounded-full border px-2 py-0.5'
-                onClick={async () => {
-                  setLocationLabel(c.displayName);
-                  setConfidence(c.confidence);
-                  setStep(1);
-                  const forecastRes = await fetch('/api/forecast', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ lat: c.lat, lon: c.lon }),
-                  });
-                  if (!forecastRes.ok) {
-                    let message = 'Failed to fetch forecast';
-                    try {
-                      const errJson = (await forecastRes.json()) as { error?: string };
-                      if (errJson?.error) message = errJson.error;
-                    } catch {}
-                    showToast(message);
-                    return;
-                  }
-                  const { days: forecastDays } = (await forecastRes.json()) as {
-                    days: TDayWeather[];
-                  };
-                  setDays(forecastDays);
-                  setStep(2);
-                  const mapped = mapWeeklyOutfits({ days: forecastDays }).map(
-                    (o, idx): TWeeklyOutfits['days'][number] => ({
-                      dateISO: forecastDays[idx]!.dateISO,
-                      high: forecastDays[idx]!.high,
-                      low: forecastDays[idx]!.low,
-                      feelsLikeHigh: forecastDays[idx]!.feelsLikeHigh,
-                      precipType: forecastDays[idx]!.precipType,
-                      pop: forecastDays[idx]!.pop,
-                      wind: forecastDays[idx]!.wind,
-                      maxGust: forecastDays[idx]!.maxGust,
-                      uvIndex: forecastDays[idx]!.uvIndex,
-                      summary: forecastDays[idx]!.summary,
-                      outfit: o.outfit as any,
-                      notes: o.notes,
-                    })
-                  );
-                  setOutfits(mapped);
-                  setStep(3);
-                }}
-              >
-                {c.displayName} ({(c.confidence * 100).toFixed(0)}%)
-              </button>
-            ))}
-          </div>
-        </div>
+      {locationLabel && confidence != null ? (
+        <StatusBanner
+          indicator={confidence >= 0.7 ? 'check' : 'warn'}
+          message={`We guessed ${locationLabel} (confidence ${(confidence * 100).toFixed(0)}%).${
+            confidence < 0.7
+              ? `${advice ? ` ${advice}` : ''}${
+                  candidates?.[1] ? ` Or did you mean ${candidates?.[1]!.displayName}?` : ''
+                }`
+              : ''
+          }`}
+          tone='muted'
+        />
       ) : null}
 
       {/* no-results notice handled by toast */}

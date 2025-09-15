@@ -13,7 +13,7 @@ export const StatusBanner = ({
   tone,
 }: {
   /** Visual indicator to render on the left */
-  indicator: 'spinner' | 'check';
+  indicator: 'spinner' | 'check' | 'warn';
 
   /** Message text to display to the right of the indicator */
   message: string;
@@ -60,7 +60,7 @@ export const StatusBanner = ({
                 strokeLinecap='round'
               />
             </svg>
-          ) : (
+          ) : indicator === 'check' ? (
             // grey/black check (not green)
             <svg
               className='h-4 w-4 text-neutral-700 dark:text-neutral-300'
@@ -77,6 +77,25 @@ export const StatusBanner = ({
                 strokeLinecap='round'
                 strokeLinejoin='round'
               />
+            </svg>
+          ) : (
+            // exclamation triangle in neutral tone
+            <svg
+              className='h-4 w-4 text-neutral-700 dark:text-neutral-300'
+              viewBox='0 0 24 24'
+              fill='none'
+              xmlns='http://www.w3.org/2000/svg'
+              aria-hidden='true'
+              focusable='false'
+            >
+              <path
+                d='M12 3l9 16H3l9-16z'
+                stroke='currentColor'
+                strokeWidth='1.8'
+                strokeLinejoin='round'
+              />
+              <path d='M12 9v5' stroke='currentColor' strokeWidth='1.8' strokeLinecap='round' />
+              <circle cx='12' cy='16.5' r='0.9' fill='currentColor' />
             </svg>
           )}
         </div>

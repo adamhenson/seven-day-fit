@@ -36,9 +36,9 @@ type TLlmCandidates = z.infer<typeof LlmCandidates>;
  */
 export const generateLocationCandidates = async ({
   input,
-}: { input: string }): Promise<TLlmCandidates['candidates']> => {
+}: { input: string }): Promise<{ candidates: TLlmCandidates['candidates']; advice?: string }> => {
   const apiKey = OPENAI_API_KEY;
-  if (!apiKey) return [];
+  if (!apiKey) return { candidates: [] as TLlmCandidates['candidates'], advice: undefined };
   const openai = new OpenAI({ apiKey });
 
   const model = OPENAI_MODEL;
@@ -57,7 +57,7 @@ export const generateLocationCandidates = async ({
   });
 
   const content = completion.choices[0]?.message?.content ?? '';
-  let candidates: TLlmCandidates['candidates'] | [] = [];
+  let candidates = [] as TLlmCandidates['candidates'];
   let advice: string | undefined;
   try {
     const text =
@@ -73,6 +73,5 @@ export const generateLocationCandidates = async ({
       advice = parsed.data.advice ?? undefined;
     }
   } catch {}
-  // We only return candidates for now; advice may be used by callers later.
-  return candidates;
+  return { candidates, advice };
 };
