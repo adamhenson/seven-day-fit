@@ -1,6 +1,7 @@
 import OpenAI from 'openai';
 import { zodResponseFormat } from 'openai/helpers/zod';
 import { z } from 'zod';
+import { OPENAI_API_KEY, OPENAI_MODEL, OPENAI_MODEL_MAX_COMPLETION_TOKENS } from './constants';
 
 /**
  * Schema for a single LLM-produced location candidate.
@@ -36,13 +37,13 @@ type TLlmCandidates = z.infer<typeof LlmCandidates>;
 export const generateLocationCandidates = async ({
   input,
 }: { input: string }): Promise<TLlmCandidates['candidates']> => {
-  const apiKey = process.env.OPENAI_API_KEY;
+  const apiKey = OPENAI_API_KEY;
   if (!apiKey) return [];
   const openai = new OpenAI({ apiKey });
 
-  const model = process.env.OPENAI_MODEL || 'gpt-5';
+  const model = OPENAI_MODEL;
   const completion = await openai.chat.completions.create({
-    max_completion_tokens: 5000,
+    max_completion_tokens: OPENAI_MODEL_MAX_COMPLETION_TOKENS,
     model,
     messages: [
       {
@@ -52,7 +53,6 @@ export const generateLocationCandidates = async ({
       },
       { role: 'user', content: input },
     ],
-    ...(model.startsWith('gpt-5') ? {} : { temperature: 0.2 as number }),
     response_format: zodResponseFormat(LlmCandidates, 'candidates'),
   });
 
