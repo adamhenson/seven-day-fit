@@ -49,6 +49,7 @@ export default function Home(): ReactElement {
           candidate?: { displayName: string; lat: number; lon: number; confidence: number };
           accepted?: boolean;
           advice?: string;
+          locationParts?: { name?: string | null; admin1?: string | null; country?: string | null };
           message?: string;
         };
         if (!data.location) {

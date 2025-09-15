@@ -20,10 +20,12 @@ export async function POST(req: Request) {
     type TCached = {
       candidates: { displayName: string; lat: number; lon: number; confidence: number }[];
       advice?: string;
+      parts?: { name?: string | null; admin1?: string | null; country?: string | null };
     };
     const cached = cacheGet<TCached>({ key: cacheKey, ttlMs: 60 * 60 * 1000 });
     let candidates = cached?.candidates ?? null;
     let cachedAdvice: string | undefined = cached?.advice;
+    let cachedParts: TCached['parts'] | undefined = cached?.parts;
 
     if (!candidates) {
       let llm: { candidate: any | null; advice?: string } = { candidate: null };
@@ -49,10 +51,27 @@ export async function POST(req: Request) {
         : null;
       const localAdvice =
         typeof llm?.advice === 'string' && llm.advice.trim() ? llm.advice.trim() : undefined;
-      // Persist both candidates and advice in cache so we can reuse advice on hits
+      // Persist both candidates and advice (and raw parts) in cache so we can reuse advice on hits
+      const sanitize = (v?: string | null): string | undefined => {
+        if (v == null) return undefined;
+        const t = String(v).trim();
+        if (!t) return undefined;
+        const lower = t.toLowerCase();
+        if (lower === 'null' || lower === 'undefined') return undefined;
+        return t.replace(/^[,;\s]+|[,;\s]+$/g, '');
+      };
+      const parts = llm?.candidate
+        ? {
+            name: sanitize(llm.candidate.name),
+            admin1: sanitize(llm.candidate.admin1 as string | null),
+            country: sanitize(llm.candidate.country as string | null),
+          }
+        : undefined;
+
       candidates = primary ? [primary] : [];
-      cacheSet({ key: cacheKey, value: { candidates, advice: localAdvice } });
+      cacheSet({ key: cacheKey, value: { candidates, advice: localAdvice, parts } });
       cachedAdvice = localAdvice;
+      cachedParts = parts;
     }
 
     if (!candidates || candidates.length === 0) {
@@ -82,6 +101,7 @@ export async function POST(req: Request) {
       accepted,
       candidate: best,
       advice: cachedAdvice,
+      locationParts: cachedParts,
     });
   } catch (error) {
     return NextResponse.json({ error: (error as Error).message }, { status: 500 });
