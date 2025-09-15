@@ -17,9 +17,13 @@ export async function POST(req: Request) {
     if (!input) return NextResponse.json({ error: 'input required' }, { status: 400 });
 
     const cacheKey = `resolve:${input.toLowerCase()}`;
-    let candidates = cacheGet<
-      { displayName: string; lat: number; lon: number; confidence: number }[]
-    >({ key: cacheKey, ttlMs: 60 * 60 * 1000 });
+    type TCached = {
+      candidates: { displayName: string; lat: number; lon: number; confidence: number }[];
+      advice?: string;
+    };
+    const cached = cacheGet<TCached>({ key: cacheKey, ttlMs: 60 * 60 * 1000 });
+    let candidates = cached?.candidates ?? null;
+    let cachedAdvice: string | undefined = cached?.advice;
 
     if (!candidates) {
       let llm: { candidate: any | null; advice?: string } = { candidate: null };
@@ -45,11 +49,10 @@ export async function POST(req: Request) {
         : null;
       const localAdvice =
         typeof llm?.advice === 'string' && llm.advice.trim() ? llm.advice.trim() : undefined;
-      // Persist only candidates in cache; advice is request-specific
+      // Persist both candidates and advice in cache so we can reuse advice on hits
       candidates = primary ? [primary] : [];
-      cacheSet({ key: cacheKey, value: candidates });
-      // Attach advice to response via closure variable
-      (req as any).__advice = localAdvice;
+      cacheSet({ key: cacheKey, value: { candidates, advice: localAdvice } });
+      cachedAdvice = localAdvice;
     }
 
     if (!candidates || candidates.length === 0) {
@@ -78,7 +81,7 @@ export async function POST(req: Request) {
       },
       accepted,
       candidate: best,
-      advice: ((req as any).__advice as string | undefined) ?? undefined,
+      advice: cachedAdvice,
     });
   } catch (error) {
     return NextResponse.json({ error: (error as Error).message }, { status: 500 });
