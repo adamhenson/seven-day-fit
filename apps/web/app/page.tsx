@@ -53,7 +53,8 @@ export default function Home(): ReactElement {
           message?: string;
         };
         if (!data.location) {
-          showToast(`We couldn't resolve that description. Try a clearer place name.`);
+          const toastAdviceMessage = !data.advice ? 'Try a clearer place name.' : data.advice;
+          showToast(`We couldn't resolve that description. ${toastAdviceMessage}`);
           setLoading(false);
           return;
         }
