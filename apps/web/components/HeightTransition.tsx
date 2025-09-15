@@ -14,8 +14,10 @@ export const HeightTransition = ({
 }: {
   /** Content to animate */
   children: ReactNode;
+
   /** Whether the content is visible */
   show: boolean;
+
   /** Transition duration in milliseconds */
   durationMs?: number;
 }): ReactElement => {
