@@ -151,12 +151,12 @@ export default function Home(): ReactElement {
       ) : null}
 
       {outfits && days && locationLabel ? (
-        <h2 className='-mb-2 mt-2 text-center text-sm text-muted-foreground'>{locationLabel}</h2>
+        <h2 className='text-center text-xl text-muted-foreground'>{locationLabel}</h2>
       ) : null}
 
       {/* no-results notice handled by toast */}
       {outfits && days ? (
-        <div className='mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7'>
+        <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7'>
           {outfits.map((d) => (
             <DayCard key={d.dateISO} day={d} outfit={d.outfit as any} notes={d.notes} />
           ))}
