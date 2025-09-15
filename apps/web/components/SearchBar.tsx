@@ -22,24 +22,46 @@ export const SearchBar = ({
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className='mx-auto flex w-full max-w-xl items-center gap-2'
-      autoComplete='off'
-    >
-      <input
-        name='q'
-        placeholder={placeholder ?? '"the big apple", "Mission, SF", or a riddle...'}
-        className='flex-1 rounded-md border bg-background px-3 py-2 outline-none focus:border-foreground'
-        aria-label='Free-text location'
-        autoComplete='off'
-        autoCorrect='off'
-        autoCapitalize='none'
-        spellCheck={false}
-      />
-      <button type='submit' className='rounded-md bg-foreground px-4 py-2 text-background'>
-        Search
-      </button>
+    <form onSubmit={handleSubmit} className='mx-auto w-full max-w-xl' autoComplete='off'>
+      <div className='relative'>
+        <input
+          id='search-input'
+          name='q'
+          placeholder={placeholder ?? '"the big apple", "Mission, SF", or a riddle...'}
+          className='w-full rounded-md border bg-background px-3 pr-12 py-2 outline-none focus:border-foreground'
+          aria-label='Free-text location'
+          autoComplete='off'
+          autoCorrect='off'
+          autoCapitalize='none'
+          spellCheck={false}
+          type='search'
+          inputMode='search'
+        />
+
+        <button
+          type='submit'
+          aria-label='Search'
+          className='absolute right-1.5 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-foreground text-background shadow-sm transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-foreground/40'
+        >
+          <svg
+            xmlns='http://www.w3.org/2000/svg'
+            viewBox='0 0 24 24'
+            fill='none'
+            className='h-4 w-4'
+            aria-hidden='true'
+          >
+            <path d='M5 12h12' stroke='currentColor' strokeWidth='2' strokeLinecap='round' />
+            <path
+              d='M13 5l7 7-7 7'
+              stroke='currentColor'
+              strokeWidth='2'
+              strokeLinecap='round'
+              strokeLinejoin='round'
+            />
+          </svg>
+          <span className='sr-only'>Search</span>
+        </button>
+      </div>
     </form>
   );
 };
