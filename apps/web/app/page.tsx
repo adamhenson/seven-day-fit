@@ -150,6 +150,10 @@ export default function Home(): ReactElement {
         />
       ) : null}
 
+      {outfits && days && locationLabel ? (
+        <h2 className='-mb-2 mt-2 text-center text-sm text-muted-foreground'>{locationLabel}</h2>
+      ) : null}
+
       {/* no-results notice handled by toast */}
       {outfits && days ? (
         <div className='mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7'>
