@@ -1,8 +1,8 @@
 'use client';
 
 import { DayCard } from '@/components/DayCard';
-import { ProgressStepper } from '@/components/ProgressStepper';
 import { SearchBar } from '@/components/SearchBar';
+import { StatusBanner } from '@/components/StatusBanner';
 import { mapWeeklyOutfits } from '@/lib/outfit';
 import type { TDayWeather, TWeeklyOutfits } from '@seven-day-fit/types';
 import { useCallback, useState } from 'react';
@@ -125,7 +125,19 @@ export default function Home(): ReactElement {
 
       <SearchBar onSubmit={handleSearch} />
 
-      {loading ? <ProgressStepper step={step} /> : null}
+      {loading ? (
+        <StatusBanner
+          indicator={step >= 2 ? 'check' : 'spinner'}
+          message={
+            step === 0
+              ? 'Decoding your clue…'
+              : step === 1
+                ? 'Fetching forecast…'
+                : 'Forecast ready'
+          }
+          tone='muted'
+        />
+      ) : null}
       {toast ? (
         <div className='pointer-events-none fixed left-1/2 top-4 z-50 -translate-x-1/2 transform'>
           <div className='pointer-events-auto rounded-md border border-neutral-700 bg-neutral-900 px-4 py-2 text-sm text-neutral-100 shadow-lg'>
