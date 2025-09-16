@@ -24,6 +24,9 @@ type TSearchState = {
   toast: string | null;
 };
 
+/**
+ * Search actions.
+ */
 type TSearchActions = {
   setToast: (msg: string | null) => void;
   runSearch: (input: string) => Promise<void>;
@@ -35,7 +38,7 @@ type TSearchActions = {
  *  - resolve-location → forecast → map outfits, with coarse step markers (0..3)
  *  - exposes a single `runSearch` action and helpers for toast + reset
  */
-export const useSearch = create<TSearchState & TSearchActions>((set, get) => ({
+export const useSearch = create<TSearchState & TSearchActions>((set) => ({
   advice: null,
   confidence: null,
   days: null,
