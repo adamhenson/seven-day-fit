@@ -106,24 +106,4 @@ input[type='search']::-webkit-search-results-decoration {
   }
 }
 
-/* Per-character staggered shimmer */
-.animate-char {
-  animation: char 1.2s ease-in-out infinite;
-}
-@keyframes char {
-  0%,
-  30% {
-    background-position: 200% 0%;
-  }
-  50% {
-    background-position: 50% 0%;
-  }
-  100% {
-    background-position: -200% 0%;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .animate-char {
-    animation: none;
-  }
-}
+/* Removed per-character shimmer (reverted to simple shimmer utilities) */
