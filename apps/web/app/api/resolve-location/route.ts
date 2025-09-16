@@ -11,7 +11,7 @@ export async function POST(req: Request) {
     const input = (body.input || '').trim();
     if (!input) return NextResponse.json({ error: 'input required' }, { status: 400 });
 
-    const cacheKey = `resolve:${input.toLowerCase()}`;
+    const cacheKey = `resolve-location:${input.toLowerCase()}`;
     type TCached = {
       candidate: TCandidateDisplay | null;
       advice?: string;
