@@ -1,5 +1,5 @@
 import type { TDayWeather } from '@seven-day-fit/types';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 import { ResultStatus } from './ResultStatus';
 
 const today: TDayWeather = {

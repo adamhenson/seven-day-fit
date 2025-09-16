@@ -44,7 +44,8 @@ export async function POST(req: Request) {
 
     const res = await fetch(url.toString(), { cache: 'no-store' });
     if (!res.ok) return NextResponse.json({ error: 'weather fetch failed' }, { status: 502 });
-    const json = (await res.json()) as { daily: any };
+    type TOpenMeteoDaily = Parameters<typeof normalizeOpenMeteo>[0]['daily'];
+    const json = (await res.json()) as { daily: TOpenMeteoDaily };
     const allDays = normalizeOpenMeteo({ daily: json.daily });
 
     // Prefer simple rule: drop today (index 0) and take next 7.

@@ -38,7 +38,9 @@ export const generateLocationCandidate = async ({
       typeof content === 'string'
         ? content
         : Array.isArray(content)
-          ? (content as any[]).map((c: any) => (typeof c?.text === 'string' ? c.text : '')).join('')
+          ? (content as Array<{ text?: string }>)
+              .map((c) => (typeof c?.text === 'string' ? c.text : ''))
+              .join('')
           : String(content);
     const obj = JSON.parse(text);
     const parsed = LlmCandidate.safeParse(obj);

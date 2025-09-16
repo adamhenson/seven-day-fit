@@ -132,7 +132,7 @@ export const useSearch = create<TSearchState & TSearchActions>((set) => ({
         maxGust: days[idx]!.maxGust,
         uvIndex: days[idx]!.uvIndex,
         summary: days[idx]!.summary,
-        outfit: o.outfit as any,
+        outfit: o.outfit,
         notes: o.notes,
       }));
       set({ outfits: mapped, step: 3 });
