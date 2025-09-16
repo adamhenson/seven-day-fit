@@ -124,23 +124,28 @@ export default function Home(): ReactElement {
 
       <SearchBar onSubmit={handleSearch} disabled={loading} />
 
-      <HeightTransition show={loading || (!!locationLabel && !!days)}>
-        {loading ? (
-          <StatusBanner
-            indicator={step >= 2 ? 'check' : 'spinner'}
-            message={step === 0 ? 'Resolving location...' : 'Fetching forecast...'}
-            tone='muted'
-          />
-        ) : locationLabel && confidence != null && days ? (
-          <StatusBanner
-            indicator={confidence >= 0.7 ? 'check' : 'warn'}
-            message={`Confidence ${(confidence * 100).toFixed(0)}%.${
-              confidence < 0.7 && advice ? ` ${advice}` : ''
-            }`}
-            tone='muted'
-          />
-        ) : null}
-      </HeightTransition>
+      {(() => {
+        const banner = loading
+          ? {
+              indicator: (step >= 2 ? 'check' : 'spinner') as 'check' | 'spinner' | 'warn',
+              message: step === 0 ? 'Resolving location...' : 'Fetching forecast...',
+            }
+          : locationLabel && confidence != null && days
+            ? {
+                indicator: (confidence >= 0.7 ? 'check' : 'warn') as 'check' | 'spinner' | 'warn',
+                message: `Confidence ${(confidence * 100).toFixed(0)}%.${
+                  confidence < 0.7 && advice ? ` ${advice}` : ''
+                }`,
+              }
+            : null;
+        return (
+          <HeightTransition show={!!banner}>
+            {banner ? (
+              <StatusBanner indicator={banner.indicator} message={banner.message} tone='muted' />
+            ) : null}
+          </HeightTransition>
+        );
+      })()}
       {toast ? (
         <div className='pointer-events-none fixed left-1/2 top-4 z-50 -translate-x-1/2 transform'>
           <div className='pointer-events-auto rounded-md border border-neutral-700 bg-neutral-900 px-4 py-2 text-sm text-neutral-100 shadow-lg'>
