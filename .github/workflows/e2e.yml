@@ -25,22 +25,9 @@ jobs:
       - name: Install Playwright browsers
         run: npm -w apps/e2e run install:browsers
 
-      - name: Resolve and log preview URL
-        id: resolve
-        shell: bash
-        run: |
-          set -euo pipefail
-          URL="${{ github.event.client_payload.url || inputs.base_url }}"
-          if [[ -z "$URL" ]]; then echo "No preview URL in payload"; exit 1; fi
-          if [[ "$URL" != http* ]]; then URL="https://$URL"; fi
-          echo "Preview URL: $URL"
-          echo "url=$URL" >> $GITHUB_OUTPUT
-          echo "HEAD:" && curl -sS -I "$URL" || true
-          echo "SNIPPET:" && curl -sS "$URL" | head -n 40 || true
-
       - name: Run Playwright against preview URL
         env:
-          E2E_BASE_URL: ${{ steps.resolve.outputs.url }}
+          E2E_BASE_URL: ${{ github.event.client_payload.url || inputs.base_url }}
         run: npm -w apps/e2e test
 
       - name: Upload Playwright report
