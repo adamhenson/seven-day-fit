@@ -1,6 +1,6 @@
 'use client';
 
-import type { ReactElement } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 
 /**
  * React component that displays a left-aligned status indicator (spinner or check)
@@ -11,6 +11,8 @@ export const StatusBanner = ({
   indicator,
   message,
   tone,
+  effect,
+  children,
 }: {
   /** Visual indicator to render on the left */
   indicator: 'spinner' | 'check' | 'warn';
@@ -20,11 +22,18 @@ export const StatusBanner = ({
 
   /** Optional visual tone variant */
   tone?: 'default' | 'muted';
+
+  /** Optional animated text effect */
+  effect?: 'flash' | 'shimmer';
+  /** Optional custom message content (e.g., per-character shimmer) */
+  children?: ReactNode;
 }): ReactElement => {
   const containerTone =
     tone === 'muted'
       ? 'border-neutral-300 bg-neutral-100 text-neutral-800 dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-200'
       : 'border-neutral-300 bg-white text-neutral-900 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-100';
+  const effectClass =
+    effect === 'flash' ? 'flash-text' : effect === 'shimmer' ? 'shimmer-text' : '';
 
   return (
     <div
@@ -99,7 +108,7 @@ export const StatusBanner = ({
             </svg>
           )}
         </div>
-        <div className='flex-1 leading-5'>{message}</div>
+        <div className={`flex-1 leading-5 ${effectClass}`}>{children ?? message}</div>
       </div>
     </div>
   );

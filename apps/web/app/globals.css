@@ -43,3 +43,87 @@ input[type='search']::-webkit-search-results-button,
 input[type='search']::-webkit-search-results-decoration {
   -webkit-appearance: none;
 }
+
+/* --- Subtle UI text animations (Cursor-like) --- */
+
+/* 1) Blinking caret after text */
+.type-caret::after {
+  content: '▎';
+  display: inline-block;
+  margin-left: 2px;
+  animation: blink 1s steps(1, end) infinite;
+}
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .type-caret::after {
+    animation: none;
+  }
+}
+
+/* 2) Flashing/pulsing text (≤3 Hz) */
+.flash-text {
+  animation: flash 1.5s ease-in-out infinite;
+}
+@keyframes flash {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .flash-text {
+    animation: none;
+  }
+}
+
+/* 3) Shimmering thinking text */
+.shimmer-text {
+  background: linear-gradient(90deg, #9aa0aa 0%, #ffffff 50%, #9aa0aa 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  background-size: 200% 100%;
+  animation: shimmer 1.6s linear infinite;
+}
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .shimmer-text {
+    animation: none;
+  }
+}
+
+/* Per-character staggered shimmer */
+.animate-char {
+  animation: char 1.2s ease-in-out infinite;
+}
+@keyframes char {
+  0%,
+  30% {
+    background-position: 200% 0%;
+  }
+  50% {
+    background-position: 50% 0%;
+  }
+  100% {
+    background-position: -200% 0%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-char {
+    animation: none;
+  }
+}

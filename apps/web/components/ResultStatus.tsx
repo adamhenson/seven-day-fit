@@ -1,6 +1,7 @@
 'use client';
 
 import { HeightTransition } from '@/components/HeightTransition';
+import { ShimmerText } from '@/components/ShimmerText';
 import { StatusBanner } from '@/components/StatusBanner';
 import type { TDayWeather } from '@seven-day-fit/types';
 import type { ReactElement } from 'react';
@@ -44,6 +45,7 @@ export const ResultStatus = ({
     ? {
         indicator: (step >= 2 ? 'check' : 'spinner') as 'check' | 'spinner' | 'warn',
         message: step === 0 ? 'Resolving location...' : 'Fetching forecast...',
+        effect: 'flash' as const,
       }
     : locationLabel && typeof confidence === 'number' && days
       ? {
@@ -57,7 +59,14 @@ export const ResultStatus = ({
   return (
     <HeightTransition show={!!banner}>
       {banner ? (
-        <StatusBanner indicator={banner.indicator} message={banner.message} tone='muted' />
+        <StatusBanner indicator={banner.indicator} tone='muted' effect={banner.effect} message={''}>
+          {/* If loading, use per-character shimmer for the message */}
+          {banner.effect ? (
+            <ShimmerText text={banner.message} className='text-inherit' />
+          ) : (
+            <span>{banner.message}</span>
+          )}
+        </StatusBanner>
       ) : null}
     </HeightTransition>
   );
