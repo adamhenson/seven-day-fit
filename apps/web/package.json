@@ -13,7 +13,6 @@
   "dependencies": {
     "@seven-day-fit/types": "file:../../packages/types",
     "next": "15.5.3",
-    "openai": "^4.57.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "zod": "^3.23.8",
@@ -22,7 +21,6 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@storybook/addon-a11y": "^10.0.0-beta.2",
-    "@storybook/addon-docs": "^10.0.0-beta.2",
     "@storybook/nextjs-vite": "^10.0.0-beta.2",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
@@ -33,7 +31,6 @@
     "eslint-plugin-storybook": "^10.0.0-beta.2",
     "storybook": "^10.0.0-beta.2",
     "tailwindcss": "^4",
-    "typescript": "^5",
-    "playwright": "^1.55.0"
+    "typescript": "^5"
   }
 }
