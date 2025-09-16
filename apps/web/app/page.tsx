@@ -5,7 +5,12 @@ import { HeightTransition } from '@/components/HeightTransition';
 import { SearchBar } from '@/components/SearchBar';
 import { StatusBanner } from '@/components/StatusBanner';
 import { mapWeeklyOutfits } from '@/lib/outfit';
-import type { TDayWeather, TWeeklyOutfits } from '@seven-day-fit/types';
+import type {
+  TDayWeather,
+  TForecastSuccess,
+  TResolveSuccess,
+  TWeeklyOutfits,
+} from '@seven-day-fit/types';
 import { useCallback, useState } from 'react';
 import type { ReactElement } from 'react';
 
@@ -44,12 +49,8 @@ export default function Home(): ReactElement {
           body: JSON.stringify({ input }),
         });
         if (!resolveRes.ok) throw new Error('Failed to resolve location');
-        const data = (await resolveRes.json()) as {
-          location?: { displayName: string; lat: number; lon: number; confidence?: number };
-          candidate?: { displayName: string; lat: number; lon: number; confidence: number };
-          accepted?: boolean;
-          advice?: string;
-          locationParts?: { name?: string | null; admin1?: string | null; country?: string | null };
+        const data = (await resolveRes.json()) as Partial<TResolveSuccess> & {
+          error?: string;
           message?: string;
         };
         if (!data.location) {
@@ -79,7 +80,7 @@ export default function Home(): ReactElement {
           setLoading(false);
           return;
         }
-        const { days: forecastDays } = (await forecastRes.json()) as { days: TDayWeather[] };
+        const { days: forecastDays } = (await forecastRes.json()) as TForecastSuccess;
         setDays(forecastDays);
 
         // Step 2 → 3: map outfits
