@@ -130,7 +130,7 @@ export default function Home(): ReactElement {
               indicator: (step >= 2 ? 'check' : 'spinner') as 'check' | 'spinner' | 'warn',
               message: step === 0 ? 'Resolving location...' : 'Fetching forecast...',
             }
-          : locationLabel && confidence != null && days
+          : locationLabel && typeof confidence === 'number' && days
             ? {
                 indicator: (confidence >= 0.7 ? 'check' : 'warn') as 'check' | 'spinner' | 'warn',
                 message: `Confidence ${(confidence * 100).toFixed(0)}%.${
