@@ -15,7 +15,7 @@
 
 ## Routes
 
-- POST `/api/resolve` (Edge)
+- POST `/api/resolve-location` (Edge)
   - Input `{ input: string }`
   - `generateLocationCandidates` (OpenAI) → pick best; cache in memory
   - Output `{ location, accepted, candidates }`

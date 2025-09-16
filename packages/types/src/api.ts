@@ -5,7 +5,7 @@ import { DayWeather } from './weather';
 /**
  * Success response for POST /api/resolve
  */
-export const ResolveSuccess = z.object({
+export const ResolveLocationSuccess = z.object({
   location: ResolvedLocation,
   accepted: z.boolean(),
   candidate: z.object({
@@ -24,7 +24,7 @@ export const ResolveSuccess = z.object({
     .optional(),
 });
 
-export type TResolveSuccess = z.infer<typeof ResolveSuccess>;
+export type TResolveLocationSuccess = z.infer<typeof ResolveLocationSuccess>;
 
 /**
  * Success response for POST /api/forecast

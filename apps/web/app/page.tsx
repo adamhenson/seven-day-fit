@@ -7,7 +7,7 @@ import { mapWeeklyOutfits } from '@/lib/outfit';
 import type {
   TDayWeather,
   TForecastSuccess,
-  TResolveSuccess,
+  TResolveLocationSuccess,
   TWeeklyOutfits,
 } from '@seven-day-fit/types';
 import { useCallback, useState } from 'react';
@@ -42,13 +42,13 @@ export default function Home(): ReactElement {
       try {
         // Step 0 → 1: resolve location
         setStep(0);
-        const resolveRes = await fetch('/api/resolve', {
+        const resolveRes = await fetch('/api/resolve-location', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ input }),
         });
         if (!resolveRes.ok) throw new Error('Failed to resolve location');
-        const data = (await resolveRes.json()) as Partial<TResolveSuccess> & {
+        const data = (await resolveRes.json()) as Partial<TResolveLocationSuccess> & {
           error?: string;
           message?: string;
         };
