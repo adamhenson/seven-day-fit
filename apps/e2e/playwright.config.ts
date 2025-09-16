@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { defineConfig, devices } from '@playwright/test';
 
 const previewUrl = process.env.E2E_BASE_URL;
+const bypassToken = process.env.E2E_BYPASS_TOKEN || process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
 
 export default defineConfig({
   testDir: './tests',
@@ -13,6 +14,12 @@ export default defineConfig({
   use: {
     baseURL: previewUrl || 'http://localhost:3000',
     trace: 'on-first-retry',
+    extraHTTPHeaders: bypassToken
+      ? {
+          'x-vercel-protection-bypass': bypassToken,
+          'x-vercel-set-bypass-cookie': 'true',
+        }
+      : undefined,
   },
   projects: [
     {
