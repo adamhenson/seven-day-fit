@@ -51,7 +51,7 @@ test('critical path: search → resolve → forecast → outfits', async ({ page
   await expect(page.getByText('Seven Day Fit')).toBeVisible();
 
   const input = page.getByRole('searchbox', { name: /free-text location/i });
-  await input.fill('the big apple');
+  await input.fill('Soho');
   await input.press('Enter');
 
   // Wait for final status banner with confidence
