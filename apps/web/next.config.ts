@@ -1,4 +1,3 @@
-import path from 'node:path';
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
@@ -8,8 +7,6 @@ const nextConfig: NextConfig = {
   },
   // Reduce duplicate invokes in dev
   reactStrictMode: false,
-  // Ensure Next.js output file tracing resolves to the monorepo root
-  outputFileTracingRoot: path.join(__dirname, '../../..'),
 };
 
 export default nextConfig;
