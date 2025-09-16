@@ -6,11 +6,14 @@ import type { TDayWeather } from '@seven-day-fit/types';
 import type { ReactElement } from 'react';
 
 /**
- * React component that renders a single animated status banner, switching
- * between loading states and the final confidence/advice message.
+ * Flow step index
  */
 export type TFlowStep = 0 | 1 | 2 | 3;
 
+/**
+ * React component that renders a single animated status banner, switching
+ * between loading states and the final confidence/advice message.
+ */
 export const ResultStatus = ({
   advice,
   confidence,
