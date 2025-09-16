@@ -8,7 +8,10 @@
     "start": "next start",
     "lint": "eslint",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:install": "playwright install --with-deps"
   },
   "dependencies": {
     "@seven-day-fit/types": "workspace:*",
@@ -19,6 +22,7 @@
     "zustand": "5.0.8"
   },
   "devDependencies": {
+    "@playwright/test": "^1.46.0",
     "@eslint/eslintrc": "^3",
     "@storybook/addon-a11y": "^10.0.0-beta.2",
     "@storybook/nextjs-vite": "^10.0.0-beta.2",
