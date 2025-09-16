@@ -3,8 +3,25 @@ import type { TCandidateDisplay } from '@seven-day-fit/types';
 import { NextResponse } from 'next/server';
 import { cacheGet, cacheSet } from '../../../lib/cache';
 
+/**
+ * Edge runtime provides lower latency for short LLM + network hops.
+ */
 export const runtime = 'edge';
 
+/**
+ * POST /api/resolve-location
+ *
+ * Resolve a free‑text description into a single best location candidate and
+ * a compact UI/display shape. We memoize results per input to keep the route
+ * snappy and cost‑efficient.
+ *
+ * Flow (happy path):
+ * 1) Validate input → derive a cache key (case‑insensitive)
+ * 2) Cache hit: return stored candidate + advice + normalized parts
+ * 3) Cache miss: call `generateLocationCandidate` (LLM structured output)
+ * 4) Map to a display candidate (adds `displayName`); sanitize parts
+ * 5) Persist to cache and respond with { location, candidate, advice }
+ */
 export async function POST(req: Request) {
   try {
     const body = (await req.json()) as { input?: string };
@@ -45,9 +62,14 @@ export async function POST(req: Request) {
           }
         : null;
 
+      // Advice is optional and only present for low‑confidence or ambiguous inputs
       const localAdvice =
         typeof llm?.advice === 'string' && llm.advice.trim() ? llm.advice.trim() : null;
 
+      /**
+       * Drop empty/placeholder fragments (e.g., "null", "undefined") and trim
+       * punctuation the LLM might include when composing parts.
+       */
       const sanitize = (v?: string | null): string | undefined => {
         if (v == null) return undefined;
         const t = String(v).trim();
