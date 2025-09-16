@@ -28,6 +28,7 @@ jobs:
       - name: Run Playwright against preview URL
         env:
           E2E_BASE_URL: ${{ github.event.client_payload.url || inputs.base_url }}
+          E2E_BYPASS_TOKEN: ${{ secrets.VERCEL_BYPASS_TOKEN }}
         run: npm -w apps/e2e test
 
       - name: Upload Playwright report

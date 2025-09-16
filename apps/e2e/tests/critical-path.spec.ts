@@ -1,6 +1,10 @@
 import { expect, test } from '@playwright/test';
 
 test('critical path: search → resolve → forecast → outfits', async ({ page }) => {
+  const bypass = process.env.E2E_BYPASS_TOKEN;
+  if (bypass) {
+    await page.goto(`/?x-vercel-set-bypass-cookie=true&x-vercel-protection-bypass=${bypass}`);
+  }
   await page.route('**/api/resolve-location', async (route) => {
     await route.fulfill({
       status: 200,
