@@ -1,9 +1,0 @@
-{
-  "name": "storybook-app",
-  "private": true,
-  "version": "0.0.1",
-  "type": "module",
-  "scripts": {
-    "build": "npm -w apps/web run build-storybook -- --output-dir=./dist"
-  }
-}
