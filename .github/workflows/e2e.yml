@@ -2,12 +2,11 @@ name: E2E on Vercel Preview
 
 on:
   repository_dispatch:
-    types: [vercel.deployment.success]
-  workflow_dispatch:
-
+    types:
+      - 'vercel.deployment.success'
 jobs:
   e2e:
-    if: github.event_name == 'repository_dispatch' || github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'repository_dispatch'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
