@@ -1,117 +1,31 @@
 'use client';
 
 import { DayCard } from '@/components/DayCard';
-import { ResultStatus, type TFlowStep } from '@/components/ResultStatus';
+import { ResultStatus } from '@/components/ResultStatus';
 import { SearchBar } from '@/components/SearchBar';
 import { Toast } from '@/components/Toast';
-import { mapWeeklyOutfits } from '@/lib/outfit';
-import type {
-  TDayWeather,
-  TForecastSuccess,
-  TResolveLocationSuccess,
-  TWeeklyOutfits,
-} from '@seven-day-fit/types';
-import { useCallback, useState } from 'react';
+import { useSearch } from '@/lib/useSearch';
+import { useCallback } from 'react';
 import type { ReactElement } from 'react';
 
 /**
  * React page component rendering the search UX and weekly results.
  */
 export default function Home(): ReactElement {
-  const [step, setStep] = useState<TFlowStep>(0);
-  const [loading, setLoading] = useState(false);
-  const [locationLabel, setLocationLabel] = useState<string | null>(null);
-  const [confidence, setConfidence] = useState<number | null>(null);
-  const [advice, setAdvice] = useState<string | null>(null);
-  const [days, setDays] = useState<TDayWeather[] | null>(null);
-  const [outfits, setOutfits] = useState<TWeeklyOutfits['days'] | null>(null);
-  const [toast, setToast] = useState<string | null>(null);
+  const {
+    advice,
+    confidence,
+    days,
+    loading,
+    locationLabel,
+    outfits,
+    step,
+    toast,
+    setToast,
+    runSearch,
+  } = useSearch();
 
-  const showToast = useCallback((msg: string) => {
-    setToast(msg);
-    window.setTimeout(() => setToast(null), 3500);
-  }, []);
-
-  const handleSearch = useCallback(
-    async (input: string) => {
-      setLoading(true);
-      setStep(0);
-      setLocationLabel(null);
-      setDays(null);
-      setOutfits(null);
-
-      try {
-        // Step 0 → 1: resolve location
-        setStep(0);
-        const resolveRes = await fetch('/api/resolve-location', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ input }),
-        });
-        if (!resolveRes.ok) throw new Error('Failed to resolve location');
-        const data = (await resolveRes.json()) as Partial<TResolveLocationSuccess> & {
-          error?: string;
-          message?: string;
-        };
-        if (!data.location) {
-          const toastAdviceMessage = !data.advice ? 'Try a clearer place name.' : data.advice;
-          showToast(`We couldn't resolve that description. ${toastAdviceMessage}`);
-          setLoading(false);
-          return;
-        }
-        setLocationLabel(data.location.displayName);
-        setConfidence(data.location.confidence ?? null);
-        setAdvice(typeof data.advice === 'string' ? data.advice : null);
-
-        // Step 1 → 2: fetch forecast
-        setStep(1);
-        const forecastRes = await fetch('/api/forecast', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ lat: data.location.lat, lon: data.location.lon }),
-        });
-        if (!forecastRes.ok) {
-          let message = 'Failed to fetch forecast';
-          try {
-            const errJson = (await forecastRes.json()) as { error?: string };
-            if (errJson?.error) message = errJson.error;
-          } catch {}
-          showToast(message);
-          setLoading(false);
-          return;
-        }
-        const { days: forecastDays } = (await forecastRes.json()) as TForecastSuccess;
-        setDays(forecastDays);
-
-        // Step 2 → 3: map outfits
-        setStep(2);
-        const mapped = mapWeeklyOutfits({ days: forecastDays }).map(
-          (o, idx): TWeeklyOutfits['days'][number] => ({
-            dateISO: forecastDays[idx]!.dateISO,
-            high: forecastDays[idx]!.high,
-            low: forecastDays[idx]!.low,
-            feelsLikeHigh: forecastDays[idx]!.feelsLikeHigh,
-            precipType: forecastDays[idx]!.precipType,
-            pop: forecastDays[idx]!.pop,
-            wind: forecastDays[idx]!.wind,
-            maxGust: forecastDays[idx]!.maxGust,
-            uvIndex: forecastDays[idx]!.uvIndex,
-            summary: forecastDays[idx]!.summary,
-            outfit: o.outfit as any,
-            notes: o.notes,
-          })
-        );
-        setOutfits(mapped);
-
-        setStep(3);
-      } catch (e) {
-        showToast((e as Error).message);
-      } finally {
-        setLoading(false);
-      }
-    },
-    [showToast]
-  );
+  const handleSearch = useCallback((input: string) => runSearch(input), [runSearch]);
 
   return (
     <main className='mx-auto flex min-h-screen max-w-7xl flex-col gap-8 p-6'>
@@ -133,7 +47,6 @@ export default function Home(): ReactElement {
         step={step}
       />
       <Toast message={toast} onClose={() => setToast(null)} />
-      {/* Final status banner is shown within HeightTransition after loading finishes */}
 
       {outfits && days && locationLabel ? (
         <h2 className='text-center text-xl text-muted-foreground'>{locationLabel}</h2>
