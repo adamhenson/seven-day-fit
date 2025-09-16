@@ -4,10 +4,6 @@ import { zodResponseFormat } from 'openai/helpers/zod';
 import { OPENAI_API_KEY, OPENAI_MODEL, OPENAI_MODEL_MAX_COMPLETION_TOKENS } from './constants';
 
 /**
- * Using shared DTO schema + type from @seven-day-fit/types
- */
-
-/**
  * Generate a single best location candidate from the text input.
  */
 export const generateLocationCandidate = async ({
@@ -20,10 +16,9 @@ export const generateLocationCandidate = async ({
   if (!apiKey) return { candidate: null as TLlmCandidate['candidate'], advice: null };
   const openai = new OpenAI({ apiKey });
 
-  const model = OPENAI_MODEL;
   const completion = await openai.chat.completions.create({
     max_completion_tokens: OPENAI_MODEL_MAX_COMPLETION_TOKENS,
-    model,
+    model: OPENAI_MODEL,
     messages: [
       {
         role: 'system',
