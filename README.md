@@ -1,4 +1,4 @@
-# seven day fit
+# Seven Day Fit
 
 A tiny web app that turns a free‑text location clue into a 7‑day weather outlook and simple outfit suggestions.
 
