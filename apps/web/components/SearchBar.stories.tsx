@@ -1,4 +1,3 @@
-import type { Meta, StoryObj } from '@storybook/types';
 import { SearchBar } from './SearchBar';
 
 const meta = {
@@ -8,17 +7,16 @@ const meta = {
     placeholder: '"the big apple", "Mission, SF", or a riddle…',
     disabled: false,
   },
-} satisfies Meta<typeof SearchBar>;
+};
 
 export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
+export const Default = {
   args: {
     onSubmit: (q: string) => alert(`Submit: ${q}`),
   },
 };
 
-export const Disabled: Story = {
+export const Disabled = {
   args: { disabled: true, onSubmit: () => {} },
 };

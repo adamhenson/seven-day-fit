@@ -1,15 +1,12 @@
-import type { Meta, StoryObj } from '@storybook/types';
 import { DayCard } from './DayCard';
 
 const meta = {
   title: 'Components/DayCard',
   component: DayCard,
-} satisfies Meta<typeof DayCard>;
+};
 
 export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Example: Story = {
+export const Example = {
   args: {
     day: {
       dateISO: '2025-09-16',

@@ -1,4 +1,3 @@
-import type { Meta, StoryObj } from '@storybook/types';
 import { StatusBanner } from './StatusBanner';
 
 const meta = {
@@ -9,19 +8,18 @@ const meta = {
     message: 'Resolving location…',
     tone: 'muted',
   },
-} satisfies Meta<typeof StatusBanner>;
+};
 
 export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const Loading: Story = {
+export const Loading = {
   args: { indicator: 'spinner', message: 'Fetching forecast…', effect: 'shimmer' },
 };
 
-export const Success: Story = {
+export const Success = {
   args: { indicator: 'check', message: 'Confidence 92%' },
 };
 
-export const Warn: Story = {
+export const Warn = {
   args: { indicator: 'warn', message: 'Confidence 55%. Try a more specific city & country.' },
 };
