@@ -7,7 +7,6 @@ import { NextResponse } from 'next/server';
 export const runtime = 'edge';
 
 /**
- * POST { lat, lon }
  * Fetch 8 days, then return the 7 days starting tomorrow.
  */
 export async function POST(req: Request) {

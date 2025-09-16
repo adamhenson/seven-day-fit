@@ -1,5 +1,5 @@
 import { generateLocationCandidate } from '@/lib/location-candidate';
-import type { TCandidateDisplay } from '@seven-day-fit/types';
+import type { TCandidateDisplay, TLlmCandidate } from '@seven-day-fit/types';
 import { NextResponse } from 'next/server';
 import { cacheGet, cacheSet } from '../../../lib/cache';
 
@@ -9,8 +9,6 @@ import { cacheGet, cacheSet } from '../../../lib/cache';
 export const runtime = 'edge';
 
 /**
- * POST /api/resolve-location
- *
  * Resolve a free‑text description into a single best location candidate and
  * a compact UI/display shape. We memoize results per input to keep the route
  * snappy and cost‑efficient.
@@ -40,7 +38,10 @@ export async function POST(req: Request) {
     let cachedParts: TCached['parts'] | undefined = cached?.parts;
 
     if (!candidate) {
-      let llm: { candidate: any | null; advice: string | null } = { candidate: null, advice: null };
+      let llm: { candidate: TLlmCandidate['candidate'] | null; advice: string | null } = {
+        candidate: null,
+        advice: null,
+      };
       try {
         llm = await generateLocationCandidate({ input });
       } catch (e) {
