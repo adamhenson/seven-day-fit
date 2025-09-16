@@ -3,6 +3,17 @@ import { LlmCandidate, ResolvedLocation } from './location';
 import { DayWeather } from './weather';
 
 /**
+ * Display-friendly candidate object used by the API for caching/transport.
+ */
+export const CandidateDisplay = z.object({
+  displayName: z.string(),
+  lat: z.number(),
+  lon: z.number(),
+  confidence: z.number(),
+});
+export type TCandidateDisplay = z.infer<typeof CandidateDisplay>;
+
+/**
  * Success response for POST /api/resolve
  */
 export const ResolveLocationSuccess = z.object({

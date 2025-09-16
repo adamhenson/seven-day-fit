@@ -1,4 +1,5 @@
 import { generateLocationCandidate } from '@/lib/location-candidate';
+import type { TCandidateDisplay } from '@seven-day-fit/types';
 import { NextResponse } from 'next/server';
 import { cacheGet, cacheSet } from '../../../lib/cache';
 
@@ -18,7 +19,7 @@ export async function POST(req: Request) {
 
     const cacheKey = `resolve:${input.toLowerCase()}`;
     type TCached = {
-      candidates: { displayName: string; lat: number; lon: number; confidence: number }[];
+      candidates: TCandidateDisplay[];
       advice?: string;
       parts?: { name?: string | null; admin1?: string | null; country?: string | null };
     };
@@ -51,6 +52,7 @@ export async function POST(req: Request) {
         : null;
       const localAdvice =
         typeof llm?.advice === 'string' && llm.advice.trim() ? llm.advice.trim() : null;
+
       // Persist both candidates and advice (and raw parts) in cache so we can reuse advice on hits
       const sanitize = (v?: string | null): string | undefined => {
         if (v == null) return undefined;
