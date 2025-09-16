@@ -1,4 +1,5 @@
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
@@ -19,7 +20,7 @@ export default defineConfig({
   webServer: [
     {
       command: 'npm -w apps/web run dev',
-      cwd: join(__dirname, '../..'),
+      cwd: join(fileURLToPath(new URL('.', import.meta.url)), '../..'),
       port: 3000,
       reuseExistingServer: !process.env.CI,
       env: { NODE_ENV: 'development' },
