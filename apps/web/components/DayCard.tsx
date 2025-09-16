@@ -31,20 +31,17 @@ export const DayCard = ({
   const recLine = notesInline ? `${outfitLabels}, ${notesInline}` : outfitLabels;
 
   return (
-    <div className='flex h-full flex-col rounded-lg border p-6 text-center'>
+    <div className='rounded-lg border p-6 text-center'>
       <div className='mb-1 text-2xl font-semibold'>{weekday}</div>
       <div className='mb-3 text-base text-muted-foreground'>{tempLine}</div>
-
-      <div className='mt-auto'>
-        <div className='mb-3 flex flex-wrap items-center justify-center gap-3 text-5xl'>
-          {visualsForPresets({ presets: outfit }).map((v) => (
-            <span key={v.label} aria-hidden='true'>
-              {v.icon}
-            </span>
-          ))}
-        </div>
-        <div className='text-base font-semibold'>{recLine}</div>
+      <div className='mb-3 flex flex-wrap items-center justify-center gap-3 text-5xl'>
+        {visualsForPresets({ presets: outfit }).map((v) => (
+          <span key={v.label} aria-hidden='true'>
+            {v.icon}
+          </span>
+        ))}
       </div>
+      <div className='text-base font-semibold'>{recLine}</div>
     </div>
   );
 };
