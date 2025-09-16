@@ -1,0 +1,43 @@
+name: E2E on Vercel Preview
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install
+        run: npm ci
+
+      - name: Get Vercel preview URL for this commit
+        id: preview
+        run: |
+          SHA=${{ github.event.pull_request.head.sha }}
+          RESP=$(curl -sS -H "Authorization: Bearer $VERCEL_TOKEN" \
+            "https://api.vercel.com/v6/deployments?limit=20&projectId=$VERCEL_PROJECT_ID")
+          URL=$(echo "$RESP" | node -e "let d='';process.stdin.on('data',c=>d+=c).on('end',()=>{const j=JSON.parse(d);const dep=j.deployments.find(x=>x.meta?.githubCommitSha==='${SHA}'&&x.target==='preview');if(!dep){process.exit(1)}console.log(dep.url.startsWith('http')?dep.url:'https://'+dep.url)})")
+          echo "url=$URL" >> $GITHUB_OUTPUT
+
+      - name: Install Playwright browsers
+        run: npm -w apps/e2e run install:browsers
+
+      - name: Run Playwright against preview
+        env:
+          E2E_BASE_URL: ${{ steps.preview.outputs.url }}
+        run: npm -w apps/e2e test
+
+
