@@ -11,7 +11,7 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
-    "@seven-day-fit/types": "file:../../packages/types",
+    "@seven-day-fit/types": "0.0.1",
     "next": "15.5.3",
     "openai": "^4.57.0",
     "react": "19.1.0",
@@ -23,7 +23,6 @@
     "@eslint/eslintrc": "^3",
     "@storybook/addon-a11y": "^10.0.0-beta.2",
     "@storybook/nextjs-vite": "^10.0.0-beta.2",
-    "@storybook/types": "^10.0.0-beta.2",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
