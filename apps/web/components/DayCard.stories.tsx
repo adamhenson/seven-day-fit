@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/nextjs';
+import type { Meta, StoryObj } from '@storybook/types';
 import { DayCard } from './DayCard';
 
 const meta = {
@@ -27,7 +27,7 @@ export const Example: Story = {
     notes: ['light layer AM/PM'],
   },
   decorators: [
-    (Story) => (
+    (Story: any) => (
       <div className='w-2xs'>
         <Story />
       </div>
