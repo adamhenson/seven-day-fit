@@ -15,7 +15,7 @@
   },
   "workspaces": ["apps/*", "packages/*"],
   "scripts": {
-    "prepare": "husky",
+    "prepare": "[ -n \"$CI\" ] || husky",
     "lint": "biome lint .",
     "format": "biome format --write .",
     "build": "npm -w packages/types run build",
