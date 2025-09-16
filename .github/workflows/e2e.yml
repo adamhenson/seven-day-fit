@@ -29,12 +29,26 @@ jobs:
         run: |
           set -euo pipefail
           SHA=${{ github.event.pull_request.head.sha }}
+          REF=${{ github.event.pull_request.head.ref }}
           TEAM_QS=""; if [[ -n "${VERCEL_ORG_ID:-}" ]]; then TEAM_QS="&teamId=${VERCEL_ORG_ID}"; fi
           URL=""
           for i in {1..24}; do
+            # 1) Try by exact commit SHA
             RESP=$(curl -sS -H "Authorization: Bearer $VERCEL_TOKEN" \
               "https://api.vercel.com/v13/deployments?projectId=$VERCEL_PROJECT_ID&target=preview&meta-githubCommitSha=$SHA$TEAM_QS&limit=1") || true
-            URL=$(echo "$RESP" | node -e "let d='';process.stdin.on('data',c=>d+=c).on('end',()=>{try{const j=JSON.parse(d);const dep=(j.deployments&&j.deployments[0])||null;if(!dep){process.exit(2)}const u=dep.url||'';console.log(u.startsWith('http')?u:'https://'+u)}catch{process.exit(3)}})") || true
+            URL=$(echo "$RESP" | node -e "let d='';process.stdin.on('data',c=>d+=c).on('end',()=>{try{const j=JSON.parse(d);const dep=(j.deployments&&j.deployments[0])||null;if(!dep||dep.readyState!=='READY'){process.exit(2)}const u=dep.url||'';console.log(u.startsWith('http')?u:'https://'+u)}catch{process.exit(3)}})") || true
+            if [[ -n "$URL" ]]; then break; fi
+
+            # 2) Fallback by branch ref
+            RESP=$(curl -sS -H "Authorization: Bearer $VERCEL_TOKEN" \
+              "https://api.vercel.com/v13/deployments?projectId=$VERCEL_PROJECT_ID&target=preview&meta-githubCommitRef=$REF$TEAM_QS&limit=1") || true
+            URL=$(echo "$RESP" | node -e "let d='';process.stdin.on('data',c=>d+=c).on('end',()=>{try{const j=JSON.parse(d);const dep=(j.deployments&&j.deployments[0])||null;if(!dep||dep.readyState!=='READY'){process.exit(2)}const u=dep.url||'';console.log(u.startsWith('http')?u:'https://'+u)}catch{process.exit(3)}})") || true
+            if [[ -n "$URL" ]]; then break; fi
+
+            # 3) Last resort: latest preview for project
+            RESP=$(curl -sS -H "Authorization: Bearer $VERCEL_TOKEN" \
+              "https://api.vercel.com/v13/deployments?projectId=$VERCEL_PROJECT_ID&target=preview$TEAM_QS&limit=1") || true
+            URL=$(echo "$RESP" | node -e "let d='';process.stdin.on('data',c=>d+=c).on('end',()=>{try{const j=JSON.parse(d);const dep=(j.deployments&&j.deployments[0])||null;if(!dep||dep.readyState!=='READY'){process.exit(2)}const u=dep.url||'';console.log(u.startsWith('http')?u:'https://'+u)}catch{process.exit(3)}})") || true
             if [[ -n "$URL" ]]; then break; fi
             echo "Waiting for Vercel preview deployment... ($i)"; sleep 5
           done
