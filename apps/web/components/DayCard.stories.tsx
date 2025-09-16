@@ -1,3 +1,4 @@
+import type { ComponentType } from 'react';
 import { DayCard } from './DayCard';
 
 const meta = {
@@ -24,7 +25,7 @@ export const Example = {
     notes: ['light layer AM/PM'],
   },
   decorators: [
-    (Story: any) => (
+    (Story: ComponentType) => (
       <div className='w-2xs'>
         <Story />
       </div>
