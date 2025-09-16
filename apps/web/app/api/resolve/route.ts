@@ -28,7 +28,7 @@ export async function POST(req: Request) {
     let cachedParts: TCached['parts'] | undefined = cached?.parts;
 
     if (!candidates) {
-      let llm: { candidate: any | null; advice?: string } = { candidate: null };
+      let llm: { candidate: any | null; advice: string | null } = { candidate: null, advice: null };
       const advice: string | undefined = undefined;
       try {
         llm = await generateLocationCandidate({ input });
