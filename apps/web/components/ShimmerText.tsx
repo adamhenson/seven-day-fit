@@ -11,6 +11,7 @@ export const ShimmerText = ({
 }: {
   /** String to render with per-character shimmer */
   text: string;
+
   /** Optional additional class names for the outer wrapper */
   className?: string;
 }): ReactElement => {
