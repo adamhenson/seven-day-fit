@@ -13,6 +13,7 @@ export const SearchBar = ({
 
   /** Optional placeholder text for the input */
   placeholder?: string;
+
   /** Disable input and submit interactions */
   disabled?: boolean;
 }) => {
