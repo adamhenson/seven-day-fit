@@ -1,3 +1,15 @@
+# Playwright artifacts
+playwright-report/
+test-results/
+blob-report/
+.playwright/
+
+# Workspace-specific Playwright outputs
+apps/e2e/playwright-report/
+apps/e2e/test-results/
+apps/e2e/blob-report/
+apps/e2e/.cache/
+
 # Root ignore for all workspaces
 
 # Dependencies

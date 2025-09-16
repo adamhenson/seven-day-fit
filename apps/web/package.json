@@ -13,6 +13,7 @@
   "dependencies": {
     "@seven-day-fit/types": "file:../../packages/types",
     "next": "15.5.3",
+    "openai": "^4.57.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "zod": "^3.23.8",
