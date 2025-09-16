@@ -26,4 +26,11 @@ export const Example: Story = {
     outfit: ['MILD_CASUAL'],
     notes: ['light layer AM/PM'],
   },
+  decorators: [
+    (Story) => (
+      <div className='w-2xs'>
+        <Story />
+      </div>
+    ),
+  ],
 };
