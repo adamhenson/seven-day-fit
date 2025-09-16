@@ -1,66 +1,34 @@
 name: E2E on Vercel Preview
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened]
+  repository_dispatch:
+    types: [vercel.deployment.success]
+  workflow_dispatch:
 
 jobs:
   e2e:
+    if: github.event_name == 'repository_dispatch' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-    env:
-      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.client_payload.git.sha || github.sha }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
-      - name: Install
+      - name: Install deps
         run: npm ci
-
-      - name: Get Vercel preview URL for this commit
-        id: preview
-        shell: bash
-        run: |
-          set -euo pipefail
-          SHA=${{ github.event.pull_request.head.sha }}
-          REF=${{ github.event.pull_request.head.ref }}
-          TEAM_QS=""; if [[ -n "${VERCEL_ORG_ID:-}" ]]; then TEAM_QS="&teamId=${VERCEL_ORG_ID}"; fi
-          URL=""
-          for i in {1..24}; do
-            # 1) Try by exact commit SHA
-            RESP=$(curl -sS -H "Authorization: Bearer $VERCEL_TOKEN" \
-              "https://api.vercel.com/v13/deployments?projectId=$VERCEL_PROJECT_ID&target=preview&meta-githubCommitSha=$SHA$TEAM_QS&limit=1") || true
-            URL=$(echo "$RESP" | node -e "let d='';process.stdin.on('data',c=>d+=c).on('end',()=>{try{const j=JSON.parse(d);const dep=(j.deployments&&j.deployments[0])||null;if(!dep||dep.readyState!=='READY'){process.exit(2)}const u=dep.url||'';console.log(u.startsWith('http')?u:'https://'+u)}catch{process.exit(3)}})") || true
-            if [[ -n "$URL" ]]; then break; fi
-
-            # 2) Fallback by branch ref
-            RESP=$(curl -sS -H "Authorization: Bearer $VERCEL_TOKEN" \
-              "https://api.vercel.com/v13/deployments?projectId=$VERCEL_PROJECT_ID&target=preview&meta-githubCommitRef=$REF$TEAM_QS&limit=1") || true
-            URL=$(echo "$RESP" | node -e "let d='';process.stdin.on('data',c=>d+=c).on('end',()=>{try{const j=JSON.parse(d);const dep=(j.deployments&&j.deployments[0])||null;if(!dep||dep.readyState!=='READY'){process.exit(2)}const u=dep.url||'';console.log(u.startsWith('http')?u:'https://'+u)}catch{process.exit(3)}})") || true
-            if [[ -n "$URL" ]]; then break; fi
-
-            # 3) Last resort: latest preview for project
-            RESP=$(curl -sS -H "Authorization: Bearer $VERCEL_TOKEN" \
-              "https://api.vercel.com/v13/deployments?projectId=$VERCEL_PROJECT_ID&target=preview$TEAM_QS&limit=1") || true
-            URL=$(echo "$RESP" | node -e "let d='';process.stdin.on('data',c=>d+=c).on('end',()=>{try{const j=JSON.parse(d);const dep=(j.deployments&&j.deployments[0])||null;if(!dep||dep.readyState!=='READY'){process.exit(2)}const u=dep.url||'';console.log(u.startsWith('http')?u:'https://'+u)}catch{process.exit(3)}})") || true
-            if [[ -n "$URL" ]]; then break; fi
-            echo "Waiting for Vercel preview deployment... ($i)"; sleep 5
-          done
-          if [[ -z "$URL" ]]; then echo "Preview not found"; exit 1; fi
-          echo "url=$URL" >> $GITHUB_OUTPUT
 
       - name: Install Playwright browsers
         run: npm -w apps/e2e run install:browsers
 
-      - name: Run Playwright against preview
+      - name: Run Playwright against preview URL
         env:
-          E2E_BASE_URL: ${{ steps.preview.outputs.url }}
+          E2E_BASE_URL: ${{ github.event.client_payload.url || inputs.base_url }}
         run: npm -w apps/e2e test
 
 
