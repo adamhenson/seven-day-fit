@@ -3,6 +3,7 @@
 import { DayCard } from '@/components/DayCard';
 import { ResultStatus, type TFlowStep } from '@/components/ResultStatus';
 import { SearchBar } from '@/components/SearchBar';
+import { Toast } from '@/components/Toast';
 import { mapWeeklyOutfits } from '@/lib/outfit';
 import type {
   TDayWeather,
@@ -131,13 +132,7 @@ export default function Home(): ReactElement {
         locationLabel={locationLabel}
         step={step}
       />
-      {toast ? (
-        <div className='pointer-events-none fixed left-1/2 top-4 z-50 -translate-x-1/2 transform'>
-          <div className='pointer-events-auto rounded-md border border-neutral-700 bg-neutral-900 px-4 py-2 text-sm text-neutral-100 shadow-lg'>
-            {toast}
-          </div>
-        </div>
-      ) : null}
+      <Toast message={toast} onClose={() => setToast(null)} />
       {/* Final status banner is shown within HeightTransition after loading finishes */}
 
       {outfits && days && locationLabel ? (
