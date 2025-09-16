@@ -1,7 +1,7 @@
 'use client';
 
 import { DayCard } from '@/components/DayCard';
-import { ResultStatus } from '@/components/ResultStatus';
+import { ResultStatus, type TFlowStep } from '@/components/ResultStatus';
 import { SearchBar } from '@/components/SearchBar';
 import { mapWeeklyOutfits } from '@/lib/outfit';
 import type {
@@ -17,7 +17,7 @@ import type { ReactElement } from 'react';
  * React page component rendering the search UX and weekly results.
  */
 export default function Home(): ReactElement {
-  const [step, setStep] = useState<0 | 1 | 2 | 3>(0);
+  const [step, setStep] = useState<TFlowStep>(0);
   const [loading, setLoading] = useState(false);
   const [locationLabel, setLocationLabel] = useState<string | null>(null);
   const [confidence, setConfidence] = useState<number | null>(null);

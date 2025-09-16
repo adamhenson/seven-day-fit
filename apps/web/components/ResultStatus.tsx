@@ -9,6 +9,8 @@ import type { ReactElement } from 'react';
  * React component that renders a single animated status banner, switching
  * between loading states and the final confidence/advice message.
  */
+export type TFlowStep = 0 | 1 | 2 | 3;
+
 export const ResultStatus = ({
   advice,
   confidence,
@@ -33,7 +35,7 @@ export const ResultStatus = ({
   locationLabel: string | null;
 
   /** Current step index (0..3) */
-  step: 0 | 1 | 2 | 3;
+  step: TFlowStep;
 }): ReactElement => {
   const banner = loading
     ? {
