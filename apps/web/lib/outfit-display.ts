@@ -18,7 +18,7 @@ export const visualForPresetMap = new Map<TOutfitPreset, TOutfitVisual>([
   ['VERY_COLD_LAYERED', { icon: '🧥🧣', label: 'heavy layers' }],
   ['COLD_JACKET', { icon: '🧥', label: 'jacket' }],
   ['COOL_LIGHT_LAYER', { icon: '🧥', label: 'light layer' }],
-  ['MILD_CASUAL', { icon: '👕', label: 'casual' }],
+  ['MILD', { icon: '👕', label: 'short or light long sleeve' }],
   ['WARM_SHORT_SLEEVE', { icon: '☀️👕', label: 'short sleeve' }],
   ['HOT_ULTRALIGHT', { icon: '☀️🩳', label: 'ultralight' }],
   ['RAIN_COOL', { icon: '🌧️🧥', label: 'rain shell + layer' }],

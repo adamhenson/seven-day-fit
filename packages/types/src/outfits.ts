@@ -10,7 +10,7 @@ export const OutfitPreset = z.enum([
   'VERY_COLD_LAYERED',
   'COLD_JACKET',
   'COOL_LIGHT_LAYER',
-  'MILD_CASUAL',
+  'MILD',
   'WARM_SHORT_SLEEVE',
   'HOT_ULTRALIGHT',
   'RAIN_COOL',

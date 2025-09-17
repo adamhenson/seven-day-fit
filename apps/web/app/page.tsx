@@ -32,7 +32,7 @@ export default function Home(): ReactElement {
       <div className='mx-auto mt-16 w-full max-w-xl text-center'>
         <h1 className='mb-2 text-3xl font-semibold'>Seven Day Fit</h1>
         <p className='text-sm text-muted-foreground'>
-          Describe a place and we&#39;ll dress you for the week.
+          Describe a location and we&#39;ll dress you for the week based on the weather.
         </p>
       </div>
 

@@ -32,7 +32,7 @@ export const outfitForDay = ({
   else if (temperature <= 29) base = 'VERY_COLD_LAYERED';
   else if (temperature <= 49) base = 'COLD_JACKET';
   else if (temperature <= 64) base = 'COOL_LIGHT_LAYER';
-  else if (temperature <= 79) base = 'MILD_CASUAL';
+  else if (temperature <= 79) base = 'MILD';
   else if (temperature <= 90) base = 'WARM_SHORT_SLEEVE';
   else base = 'HOT_ULTRALIGHT';
 
@@ -41,9 +41,7 @@ export const outfitForDay = ({
   >;
   const notes = [
     ...(isUvHigh ? ['Hat & SPF'] : []),
-    ...(day.low !== undefined && day.low < 58 && base === 'MILD_CASUAL'
-      ? ['Light layer AM/PM']
-      : []),
+    ...(day.low !== undefined && day.low < 58 && base === 'MILD' ? ['Light layer AM/PM'] : []),
   ];
 
   return { outfit, notes };
